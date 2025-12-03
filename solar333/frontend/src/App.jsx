@@ -1,33 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
+import GraficoDiario from './componentes/GraficoDiario';
 
-// Simulação de dados do backend
-const initialEnergyData = {
-  today: {
-    generated: 42.5, // kWh
-    consumed: 28.3, // kWh
-    exported: 14.2, // kWh
-    savings: 38.2, // Reais
-    efficiency: 92, // %
-    co2Saved: 25.4 // kg
+const energiaInicial = {
+  hoje: {
+    generated: 42.5,
+    consumed: 28.3,
+    exported: 14.2,
+    savings: 38.2,
+    efficiency: 92,
+    co2Saved: 25.4
   },
-  thisMonth: {
-    generated: 1250.8, // kWh
-    consumed: 890.5, // kWh
-    exported: 360.3, // kWh
-    savings: 1120.7, // Reais
-    efficiency: 94, // %
-    co2Saved: 748.2 // kg
+  esteMes: {
+    generated: 1250.8, 
+    consumed: 890.5,
+    exported: 360.3, 
+    savings: 1120.7,
+    efficiency: 94, 
+    co2Saved: 748.2 
   },
-  thisYear: {
-    generated: 14850.3, // kWh
-    consumed: 10560.7, // kWh
-    exported: 4289.6, // kWh
-    savings: 13320.4, // Reais
-    efficiency: 95, // %
-    co2Saved: 8920.1 // kg
+  esteAno: {
+    generated: 14850.3, 
+    consumed: 10560.7, 
+    exported: 4289.6, 
+    savings: 13320.4, 
+    efficiency: 95, 
+    co2Saved: 8920.1 
   },
-  dailyData: [
+  dadosDiarios: [
     { date: '2023-10-01', generated: 40.2, consumed: 26.8, exported: 13.4 },
     { date: '2023-10-02', generated: 38.7, consumed: 25.9, exported: 12.8 },
     { date: '2023-10-03', generated: 41.5, consumed: 27.3, exported: 14.2 },
@@ -39,60 +39,56 @@ const initialEnergyData = {
     { date: '2023-10-09', generated: 41.8, consumed: 27.8, exported: 14.0 },
     { date: '2023-10-10', generated: 39.5, consumed: 26.5, exported: 13.0 },
   ],
-  systemInfo: {
-    installedPower: 7.5, // kWp
+  infoSistema: {
+    installedPower: 7.5,
     panelsCount: 20,
     installationDate: '2022-05-15',
-    inverterEfficiency: 97.5, // %
-    estimatedPayback: 4.5 // anos
+    inverterEfficiency: 97.5,
+    estimatedPayback: 4.5
   }
 };
 
-const SolarMonitoring = () => {
-  const [energyData, setEnergyData] = useState(initialEnergyData);
-  const [timeRange, setTimeRange] = useState('today');
+const Monitoramento = () => {
+  const [energyData, setEnergyData] = useState(energiaInicial);
+  const [timeRange, setTimeRange] = useState('hoje');
   const [loading, setLoading] = useState(false);
   const [newGeneration, setNewGeneration] = useState('');
 
-  // Simula atualização dos dados a cada 10 segundos
+  
   useEffect(() => {
     const interval = setInterval(() => {
-      updateEnergyData();
+      atualizaConsumoEnergia();
     }, 10000);
 
     return () => clearInterval(interval);
   }, []);
 
-  // Atualiza os dados de energia simulando leituras do sistema
-  const updateEnergyData = () => {
+  const atualizaConsumoEnergia = () => {
     setLoading(true);
     
     setTimeout(() => {
       const updatedData = { ...energyData };
       const randomFactor = 0.95 + Math.random() * 0.1;
       
-      // Atualiza dados de hoje
-      updatedData.today.generated = parseFloat((updatedData.today.generated * randomFactor).toFixed(1));
-      updatedData.today.consumed = parseFloat((updatedData.today.consumed * (0.98 + Math.random() * 0.04)).toFixed(1));
-      updatedData.today.exported = parseFloat((updatedData.today.generated - updatedData.today.consumed).toFixed(1));
-      updatedData.today.savings = parseFloat((updatedData.today.generated * 0.9).toFixed(1));
-      updatedData.today.co2Saved = parseFloat((updatedData.today.generated * 0.6).toFixed(1));
+      updatedData.hoje.generated = parseFloat((updatedData.hoje.generated * randomFactor).toFixed(1));
+      updatedData.hoje.consumed = parseFloat((updatedData.hoje.consumed * (0.98 + Math.random() * 0.04)).toFixed(1));
+      updatedData.hoje.exported = parseFloat((updatedData.hoje.generated - updatedData.hoje.consumed).toFixed(1));
+      updatedData.hoje.savings = parseFloat((updatedData.hoje.generated * 0.9).toFixed(1));
+      updatedData.hoje.co2Saved = parseFloat((updatedData.hoje.generated * 0.6).toFixed(1));
       
-      // Adiciona novo dado diário
       const newDate = new Date();
-      newDate.setDate(newDate.getDate() + updatedData.dailyData.length);
+      newDate.setDate(newDate.getDate() + updatedData.dadosDiarios.length);
       const formattedDate = newDate.toISOString().split('T')[0];
       
-      updatedData.dailyData.push({
+      updatedData.dadosDiarios.push({
         date: formattedDate,
         generated: parseFloat((40 + Math.random() * 8).toFixed(1)),
         consumed: parseFloat((25 + Math.random() * 6).toFixed(1)),
         exported: parseFloat((10 + Math.random() * 6).toFixed(1))
       });
       
-      // Mantém apenas os últimos 30 dias
-      if (updatedData.dailyData.length > 30) {
-        updatedData.dailyData.shift();
+      if (updatedData.dadosDiarios.length > 30) {
+        updatedData.dadosDiarios.shift();
       }
       
       setEnergyData(updatedData);
@@ -100,109 +96,65 @@ const SolarMonitoring = () => {
     }, 500);
   };
 
-  // Adiciona geração manual (simulação de entrada do usuário)
-  const addManualGeneration = () => {
+  const addGeracaoManual = () => {
     if (!newGeneration || isNaN(parseFloat(newGeneration))) return;
     
     const updatedData = { ...energyData };
     const value = parseFloat(newGeneration);
     
-    updatedData.today.generated += value;
-    updatedData.today.exported = parseFloat((updatedData.today.generated - updatedData.today.consumed).toFixed(1));
-    updatedData.today.savings += parseFloat((value * 0.9).toFixed(1));
-    updatedData.today.co2Saved += parseFloat((value * 0.6).toFixed(1));
+    updatedData.hoje.generated += value;
+    updatedData.hoje.exported = parseFloat((updatedData.hoje.generated - updatedData.hoje.consumed).toFixed(1));
+    updatedData.hoje.savings += parseFloat((value * 0.9).toFixed(1));
+    updatedData.hoje.co2Saved += parseFloat((value * 0.6).toFixed(1));
     
     setEnergyData(updatedData);
     setNewGeneration('');
     
-    // Atualiza dados mensais e anuais também
-    updatedData.thisMonth.generated += value;
-    updatedData.thisMonth.exported = parseFloat((updatedData.thisMonth.generated - updatedData.thisMonth.consumed).toFixed(1));
-    updatedData.thisMonth.savings += parseFloat((value * 0.9).toFixed(1));
-    updatedData.thisMonth.co2Saved += parseFloat((value * 0.6).toFixed(1));
+    updatedData.esteMes.generated += value;
+    updatedData.esteMes.exported = parseFloat((updatedData.esteMes.generated - updatedData.esteMes.consumed).toFixed(1));
+    updatedData.esteMes.savings += parseFloat((value * 0.9).toFixed(1));
+    updatedData.esteMes.co2Saved += parseFloat((value * 0.6).toFixed(1));
     
-    updatedData.thisYear.generated += value;
-    updatedData.thisYear.exported = parseFloat((updatedData.thisYear.generated - updatedData.thisYear.consumed).toFixed(1));
-    updatedData.thisYear.savings += parseFloat((value * 0.9).toFixed(1));
-    updatedData.thisYear.co2Saved += parseFloat((value * 0.6).toFixed(1));
+    updatedData.esteAno.generated += value;
+    updatedData.esteAno.exported = parseFloat((updatedData.esteAno.generated - updatedData.esteAno.consumed).toFixed(1));
+    updatedData.esteAno.savings += parseFloat((value * 0.9).toFixed(1));
+    updatedData.esteAno.co2Saved += parseFloat((value * 0.6).toFixed(1));
   };
 
-  // Retorna os dados com base no período selecionado
-  const getCurrentData = () => {
+  const getDataAtual = () => {
     return energyData[timeRange];
   };
 
-  // Calcula porcentagem de autoconsumo
-  const calculateSelfConsumption = () => {
-    const data = getCurrentData();
+  const CalculaConsumo = () => {
+    const data = getDataAtual();
     return data.generated > 0 ? ((data.consumed / data.generated) * 100).toFixed(1) : 0;
   };
 
-  // Renderiza gráfico simples de barras para dados diários
-  const renderDailyChart = () => {
-    const lastSevenDays = energyData.dailyData.slice(-7);
-    
-    return (
-      <div className="daily-chart">
-        <h3>Geração dos Últimos 7 Dias (kWh)</h3>
-        <div className="chart-bars">
-          {lastSevenDays.map((day, index) => (
-            <div key={index} className="chart-bar-container">
-              <div className="chart-bar-label">{new Date(day.date).getDate()}/{new Date(day.date).getMonth()+1}</div>
-              <div className="chart-bar">
-                <div 
-                  className="bar-generated" 
-                  style={{ height: `${(day.generated / 50) * 100}%` }}
-                  title={`Gerado: ${day.generated} kWh`}
-                ></div>
-                <div 
-                  className="bar-consumed" 
-                  style={{ height: `${(day.consumed / 50) * 100}%` }}
-                  title={`Consumido: ${day.consumed} kWh`}
-                ></div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="chart-legend">
-          <div className="legend-item">
-            <div className="legend-color generated"></div>
-            <span>Energia Gerada</span>
-          </div>
-          <div className="legend-item">
-            <div className="legend-color consumed"></div>
-            <span>Energia Consumida</span>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const currentData = getCurrentData();
+  const currentData = getDataAtual();
 
   return (
     <div className="solar-monitoring">
       <header className="monitoring-header">
-        <h1>Monitoramento de Energia Solar</h1>
+        <h1>Monitoramento de Energia Fotovoltaica - Solar333</h1>
         <p className="subtitle">Acompanhe em tempo real a geração e economia do seu sistema fotovoltaico</p>
       </header>
 
       <div className="time-range-selector">
         <button 
-          className={`time-btn ${timeRange === 'today' ? 'active' : ''}`}
-          onClick={() => setTimeRange('today')}
+          className={`time-btn ${timeRange === 'hoje' ? 'active' : ''}`}
+          onClick={() => setTimeRange('hoje')}
         >
           Hoje
         </button>
         <button 
-          className={`time-btn ${timeRange === 'thisMonth' ? 'active' : ''}`}
-          onClick={() => setTimeRange('thisMonth')}
+          className={`time-btn ${timeRange === 'esteMes' ? 'active' : ''}`}
+          onClick={() => setTimeRange('esteMes')}
         >
           Este Mês
         </button>
         <button 
-          className={`time-btn ${timeRange === 'thisYear' ? 'active' : ''}`}
-          onClick={() => setTimeRange('thisYear')}
+          className={`time-btn ${timeRange === 'esteAno' ? 'active' : ''}`}
+          onClick={() => setTimeRange('esteAno')}
         >
           Este Ano
         </button>
@@ -214,8 +166,8 @@ const SolarMonitoring = () => {
             <h3>Energia Gerada</h3>
             <div className="stat-value">{currentData.generated} kWh</div>
             <div className="stat-subtitle">
-              {timeRange === 'today' ? 'Até o momento' : 
-               timeRange === 'thisMonth' ? 'Total do mês' : 'Total do ano'}
+              {timeRange === 'hoje' ? 'Até o momento' : 
+               timeRange === 'esteMes' ? 'Total do mês' : 'Total do ano'}
             </div>
           </div>
 
@@ -250,8 +202,8 @@ const SolarMonitoring = () => {
               <span className="detail-value">{currentData.exported} kWh</span>
             </div>
             <div className="detail-item">
-              <span className="detail-label">Autoconsumo:</span>
-              <span className="detail-value">{calculateSelfConsumption()}%</span>
+              <span className="detail-label">Economia:</span>
+              <span className="detail-value">{CalculaConsumo()}%</span>
             </div>
             <div className="detail-item">
               <span className="detail-label">Tarifa Média:</span>
@@ -263,30 +215,30 @@ const SolarMonitoring = () => {
             <h3>Informações do Sistema</h3>
             <div className="detail-item">
               <span className="detail-label">Potência Instalada:</span>
-              <span className="detail-value">{energyData.systemInfo.installedPower} kWp</span>
+              <span className="detail-value">{energyData.infoSistema.installedPower} kWp</span>
             </div>
             <div className="detail-item">
               <span className="detail-label">Número de Painéis:</span>
-              <span className="detail-value">{energyData.systemInfo.panelsCount}</span>
+              <span className="detail-value">{energyData.infoSistema.panelsCount}</span>
             </div>
             <div className="detail-item">
               <span className="detail-label">Eficiência do Inversor:</span>
-              <span className="detail-value">{energyData.systemInfo.inverterEfficiency}%</span>
+              <span className="detail-value">{energyData.infoSistema.inverterEfficiency}%</span>
             </div>
             <div className="detail-item">
               <span className="detail-label">Retorno do Investimento:</span>
-              <span className="detail-value">{energyData.systemInfo.estimatedPayback} anos</span>
+              <span className="detail-value">{energyData.infoSistema.estimatedPayback} anos</span>
             </div>
           </div>
         </div>
 
         <div className="chart-container">
-          {renderDailyChart()}
+          <GraficoDiario dadosDiarios={energyData.dadosDiarios} />
         </div>
 
         <div className="controls">
           <div className="manual-input">
-            <h3>Simular Geração (para testes)</h3>
+            <h3>Adicione Dados extras</h3>
             <div className="input-group">
               <input 
                 type="number" 
@@ -296,19 +248,20 @@ const SolarMonitoring = () => {
                 min="0"
                 step="0.1"
               />
-              <button onClick={addManualGeneration} className="add-btn">
+              <button onClick={addGeracaoManual} className="add-btn">
                 Adicionar
               </button>
             </div>
             <p className="input-help">
-              Use este campo para simular a geração de energia adicional
+              Use este campo para a a geração de energia adicional para casos em que houve uma pequena queda de energia e impediu a coleta dos dados.
             </p>
           </div>
 
           <div className="system-controls">
+            <h2>Forçar Atualização</h2>
             <button 
               className={`update-btn ${loading ? 'loading' : ''}`}
-              onClick={updateEnergyData}
+              onClick={atualizaConsumoEnergia}
               disabled={loading}
             >
               {loading ? 'Atualizando...' : 'Atualizar Dados'}
@@ -320,12 +273,12 @@ const SolarMonitoring = () => {
         </div>
 
         <div className="summary">
-          <h3>Resumo de Impacto</h3>
+          <h3>Impacto no meio ambiente:</h3>
           <p>
-            Seu sistema solar já gerou <strong>{energyData.thisYear.generated} kWh</strong> este ano, 
-            economizando <strong>R$ {energyData.thisYear.savings}</strong> e evitando a emissão de 
-            <strong> {energyData.thisYear.co2Saved} kg</strong> de CO₂ na atmosfera.
-            Isso equivale a {Math.round(energyData.thisYear.co2Saved / 20)} árvores plantadas.
+            Seu sistema solar já gerou <strong>{energyData.esteAno.generated} kWh</strong> este ano, 
+            economizando <strong>R$ {energyData.esteAno.savings}</strong> e evitando a emissão de 
+            <strong> {energyData.esteAno.co2Saved} kg</strong> de CO₂ na atmosfera.
+            Isso equivale a <strong>{Math.round(energyData.esteAno.co2Saved / 20)} árvores plantadas.</strong>
           </p>
         </div>
       </div>
@@ -333,4 +286,4 @@ const SolarMonitoring = () => {
   );
 };
 
-export default SolarMonitoring;
+export default Monitoramento;

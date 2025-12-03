@@ -160,80 +160,92 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
+.daily-chart {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 24px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .daily-chart h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: #2c3e50;
-  font-size: 1.3rem;
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 18px;
 }
 
 .chart-bars {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: flex-end;
-  height: 250px;
-  padding-bottom: 30px;
-  border-bottom: 1px solid #ecf0f1;
+  gap: 12px;
+  height: 200px;
   margin-bottom: 20px;
 }
 
 .chart-bar-container {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 12%;
-}
-
-.chart-bar-label {
-  margin-bottom: 10px;
-  font-size: 0.9rem;
-  color: #7f8c8d;
+  gap: 8px;
 }
 
 .chart-bar {
-  display: flex;
-  align-items: flex-end;
   width: 100%;
-  height: 100%;
-  gap: 2px;
+  height: 150px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
 }
 
 .bar-generated {
-  width: 50%;
-  background-color: #3498db;
-  border-radius: 3px 3px 0 0;
+  width: 100%;
+  background: linear-gradient(to top, #ffc107, #ffeb3b);
+  transition: height 0.3s ease;
 }
 
 .bar-consumed {
-  width: 50%;
-  background-color: #2ecc71;
-  border-radius: 3px 3px 0 0;
+  width: 100%;
+  background: linear-gradient(to top, #ff6b6b, #ff8787);
+  transition: height 0.3s ease;
+}
+
+.chart-bar-label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
 }
 
 .chart-legend {
   display: flex;
+  gap: 20px;
   justify-content: center;
-  gap: 30px;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
 }
 
 .legend-color {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 3px;
 }
 
 .legend-color.generated {
-  background-color: #3498db;
+  background: linear-gradient(to top, #ffc107, #ffeb3b);
 }
 
 .legend-color.consumed {
-  background-color: #2ecc71;
+  background: linear-gradient(to top, #ff6b6b, #ff8787);
 }
 
 .controls {
